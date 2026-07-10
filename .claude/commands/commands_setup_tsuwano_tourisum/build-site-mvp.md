@@ -5,12 +5,12 @@ description: >
   コマンド駆動フロー。トップページに第一声(⑪)・15秒紹介(②)・声のトーン(⑧)を反映し、
   ⑩の禁止事項を守る。/bootstrap 実行後（project-brief.md 記入後）に実行する。
   MVP 到達後の追加開発（セクション追加・推敲・公開・CMS 化）は Claude に直接依頼して進める。
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(npx *), Bash(npm *), Bash(ls *), Bash(cat *), Bash(git *)
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(npx *), Bash(npm *), Bash(ls *), Bash(cat *), Bash(git *), Bash(node *)
 ---
 
 # /build-site-mvp — 津和野PRサイトの最初のMVPを作る
 
-> Phase 0 (`/bootstrap`) の後に実行。環境構築 Phase 1〜9 は飛ばして構わない（初心者の最短ルート）。
+> Phase 0 (`/bootstrap`) の後に実行。環境構築 Phase 1〜8 は飛ばして構わない（初心者の最短ルート）。
 > 一発で完璧を狙わない。**まず「動く1枚」を出す。** その後は Claude への直接依頼で伸ばす。
 > Let's think step by step.
 
