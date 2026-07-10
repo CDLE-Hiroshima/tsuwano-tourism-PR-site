@@ -9,7 +9,7 @@ description: >
   依存不足・settings.json の綻び）対策として、hook を使う前に走らせる健康診断 self-check.sh を
   構築し SessionStart の先頭に置く。全層の出力を [self-check] / [preflight] / [guard] / [fmt] プレフィックスで統一する。
   /setup-commands の完了後に実行する。
-allowed-tools: Read, Write, Edit, Glob, Bash(mkdir *), Bash(chmod *), Bash(ls *)
+allowed-tools: Read, Write, Edit, Glob, Bash(mkdir *), Bash(chmod *), Bash(ls *), Bash(cat *), Bash(bash *)
 ---
 
 # /setup-hooks — Hook 群構築コマンド
@@ -241,7 +241,7 @@ UNCOMMITTED=$(git status --short 2>/dev/null | wc -l | tr -d ' ')
 REIMAGINE=""
 if [ -f "$TASK_DIR/design-v1.md" ] || [ -f "$TASK_DIR/design-comparison.md" ]; then
     REIMAGINE=" | reimagine: applied"
-elif grep -q "/reimagine 適用: Yes" "$TASK_DIR/requirement.md" 2>/dev/null; then
+elif grep -qE "/reimagine[)）]?[ 　]?適用: Yes" "$TASK_DIR/requirement.md" 2>/dev/null; then
     REIMAGINE=" | reimagine: PENDING"
 fi
 
@@ -283,8 +283,9 @@ chmod +x .claude/hooks/preflight.sh
 # PreToolUse hook (Guard 層) - .steering/ の必須ファイルが無い状態で実装ファイルの編集をブロック
 # パス時は [guard] PASS を明示出力する
 
-# 引数: 編集対象のファイルパス（PreToolUse の入力から渡される）
-TARGET_FILE="$1"
+# PreToolUse は引数ではなく stdin に JSON を渡す。jq で対象パスを取得する。
+INPUT=$(cat)
+TARGET_FILE=$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // empty')
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 
 # 相対パス化（ログ可読性のため）
@@ -354,8 +355,11 @@ Step 1 のヒアリングで禁止事項が挙がった場合、追加のチェ�
 # PreToolUse hook (Guard 層) - 禁止パターンの検出
 # パス時は [guard] PASS を明示出力する
 
-TARGET_FILE="$1"
-CONTENT="$2"  # 書き込み予定の内容（Edit/Write の場合）
+# PreToolUse は stdin に JSON を渡す。jq で対象パスと書き込み内容を取得する。
+INPUT=$(cat)
+TARGET_FILE=$(printf '%s' "$INPUT" | jq -r '.tool_input.file_path // empty')
+# Write は .tool_input.content、Edit は .tool_input.new_string を対象にする
+CONTENT=$(printf '%s' "$INPUT" | jq -r '.tool_input.content // .tool_input.new_string // empty')
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 REL="${TARGET_FILE#$REPO_ROOT/}"
 
@@ -661,8 +665,8 @@ chmod +x .claude/hooks/self-check.sh
       {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/pre-edit-steering.sh \"$TOOL_INPUT_FILE\"" },
-          { "type": "command", "command": "bash .claude/hooks/pre-edit-banned.sh \"$TOOL_INPUT_FILE\" \"$TOOL_INPUT_CONTENT\"" }
+          { "type": "command", "command": "bash .claude/hooks/pre-edit-steering.sh" },
+          { "type": "command", "command": "bash .claude/hooks/pre-edit-banned.sh" }
         ]
       }
     ],
@@ -691,7 +695,7 @@ chmod +x .claude/hooks/self-check.sh
 }
 ```
 
-⚠️ **PreToolUse の `$TOOL_INPUT_FILE` / `$TOOL_INPUT_CONTENT` は Claude Code の環境変数**。実際のフック仕様に応じて調整が必要。ユーザーに Claude Code のフックドキュメントを確認して正確な変数名を使うよう促すこと。
+⚠️ **PreToolUse hook の入力は stdin の JSON**。`$TOOL_INPUT_FILE` / `$TOOL_INPUT_CONTENT` という環境変数は Claude Code に存在しない（引数で渡すと空文字になり Guard が無言スルーする）。対象パスは `INPUT=$(cat); jq -r '.tool_input.file_path'`、書き込み内容は `.tool_input.content`（Write）/ `.tool_input.new_string`（Edit）で stdin から取得する（上記スクリプトはこの方式）。この方式は `jq` に依存するため、`self-check.sh` の `jq` チェックを WARN ではなく必須扱いにするか、`jq` 無し環境向けフォールバックを用意すること。利用可能な変数は `${CLAUDE_PROJECT_DIR}` / `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_EFFORT}` のみ。
 
 ⚠️ **pre-edit-banned.sh を作らない場合**（ヒアリングで禁止事項が無かった場合）、`PreToolUse` の該当行を削除する。
 

@@ -4,7 +4,7 @@ description: >
   functional-design.md, architecture.md, repository-structure.md,
   development-guidelines.md, glossary.md を 1 ファイルずつ承認を得ながら作成する。
   Plan Mode + Opus で実行することが必須。/bootstrap の完了後に実行する。
-allowed-tools: Read, Write, Glob, Grep, Bash(git *), Bash(cat *), Task
+allowed-tools: Read, Write, Glob, Grep, Bash(git *), Bash(cat *), Bash(find *), Bash(wc *), Bash(ls *), Task
 ---
 
 # /setup-docs — 永続ドキュメント構築コマンド

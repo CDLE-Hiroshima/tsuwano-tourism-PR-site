@@ -6,12 +6,12 @@ description: >
   進捗記録ファイル作成・参加者ごとの README 生成・構築計画の提示を行う。
   勉強会を始める時に最初に実行する。他の setup-* コマンドはすべてこのコマンドの
   実行後に順番に実行される前提。技術スタックは Next.js / React。
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(git *), Bash(date *), Bash(ls *), Bash(cat *), AskUserQuestion
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir *), Bash(git *), Bash(date *), Bash(ls *), Bash(cat *), Bash(find *), AskUserQuestion
 ---
 
 # /bootstrap — 津和野PRサイト勉強会の入口
 
-> 一発でやろうとしない。10 段階 (Phase 0〜9) に分け、各セッションで一つずつ完璧に仕上げる。
+> 一発でやろうとしない。9 段階 (Phase 0〜8) に分け、各セッションで一つずつ完璧に仕上げる。
 > Let's think step by step.
 
 ## このコマンドは何のためにあるか（勉強会ファシリテーターへ）

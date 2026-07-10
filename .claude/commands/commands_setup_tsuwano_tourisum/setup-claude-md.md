@@ -6,7 +6,7 @@ description: >
   (アーキテクチャ / 規約 / テスト / git ワークフロー) とリンクハブ。CLAUDE.md は
   @docs/agent-shared.md と @docs/external-skills.md を参照することで重複を排除する。
   .steering/_template/ にタスク用 5 ファイルテンプレートを配置する。/setup-marketplace の完了後に実行する。
-allowed-tools: Read, Write, Glob, Bash(mkdir *), Bash(wc *), Bash(cat *), Bash(grep *)
+allowed-tools: Read, Write, Glob, Bash(mkdir *), Bash(wc *), Bash(cat *), Bash(grep *), Bash(ls *)
 ---
 
 # /setup-claude-md — CLAUDE.md / docs/agent-shared.md と作業記録構造の構築

@@ -4,7 +4,7 @@ description: >
   各 Skill は SKILL.md と必須の補足ファイル（examples.md, patterns.md など）
   を含む。description は具体的トリガー語を必須とし、Shell Preprocessing
   を活用した動的 Skill を最低 1 つ含める。/setup-claude-md の完了後に実行する。
-allowed-tools: Read, Write, Glob, Grep, Bash(mkdir *), Bash(ls *), Task
+allowed-tools: Read, Write, Glob, Grep, Bash(mkdir *), Bash(ls *), Bash(find *), Bash(wc *), Task
 ---
 
 # /setup-skills — Skill 群構築コマンド
@@ -89,11 +89,11 @@ Phase 2 を skip して external-skills.md が空テンプレの場合: 全領�
    Task tool で新規 subagent を dispatch し、両面評価で反復改善する）
 
 ### プロジェクト固有 Skill
-6. **[framework]-patterns** — フレームワーク固有のパターン
-7. **architecture-rules** — アーキテクチャ制約
+7. **[framework]-patterns** — フレームワーク固有のパターン
+8. **architecture-rules** — アーキテクチャ制約
 
 ### 動的 Skill（Shell Preprocessing 活用）
-8. **project-status** — 現在のプロジェクト状態を動的に取得
+9. **project-status** — 現在のプロジェクト状態を動的に取得
 
 ### 公式 Skill でカバー済み (作らない)
 - PDF 操作 → 公式 `pdf` Skill (Phase 2 で導入済) を使う
@@ -271,7 +271,9 @@ cat .claude/skills/[skill-name]/SKILL.md
 
 Grill me（自己レビュー）では排除できない「書き手のバイアス」を、新規 subagent による実行で客観的に検証する。
 
-`.claude/skills/empirical-prompt-tuning/SKILL.md` を Read で参照し、tier に応じたワークフローで評価・改善を実施する。Full の場合はシナリオ diversity rubric（median / edge-low / edge-high / adversarial のうち 3 象限）、hold-out 最低 2 本、`[critical]` タグ比率 20-40% を遵守する。結果をユーザーに提示して承認を得てから次の Skill へ進む。
+`.claude/skills/empirical-prompt-tuning/SKILL.md`（Step 4.6 で生成される。まだ生成していない段階ではリポジトリ直下の原本 `skill-empirical-prompt-tuning.md`）を Read で参照し、tier に応じたワークフローで評価・改善を実施する。Full の場合はシナリオ diversity rubric（median / edge-low / edge-high / adversarial のうち 3 象限）、hold-out 最低 2 本、`[critical]` タグ比率 20-40% を遵守する。結果をユーザーに提示して承認を得てから次の Skill へ進む。
+
+> ⚠️ **順序の注意**: この Phase H で使う評価エンジン `empirical-prompt-tuning` は Step 4.6 で最後に生成される。Step 3〜4.5 の Phase H はまだ `.claude/skills/` 配下に存在しないため、**参照先はリポジトリ直下の原本 `skill-empirical-prompt-tuning.md`** とする（内容は同一）。もしくは Step 4.6 の生成を Step 3 の前へ前倒しして先にコピーしておけば、以降は常に `.claude/skills/empirical-prompt-tuning/SKILL.md` を参照できる（どちらでも可）。
 
 **`empirical-prompt-tuning` Skill 自身には Phase H を適用しない**（メタ循環）。代わりに `/reimagine` を Skill ファイルに適用する手順（本 Skill「メタ循環対策」節参照）を使う。
 
@@ -434,6 +436,8 @@ CRITICAL/HIGH は必ず対応。
 補足ファイルは `anti-patterns.md`（「骨格を飛ばして実装に入る」等の失敗集）を推奨。
 
 ### Step 4.6: `empirical-prompt-tuning` Skill の作成（必須）
+
+> 💡 本 Skill は Step 3 以降の Phase H から参照される評価エンジンなので、可能ならこの生成手順をセットアップの早い段階（Step 3 の前）へ前倒ししてもよい。前倒しすれば Phase H は常に `.claude/skills/empirical-prompt-tuning/SKILL.md` を参照でき、原本フォールバックが不要になる。
 
 この Skill は **他の Skill やコマンドの指示品質を客観的に検証する手法** を定義する。Phase G（Grill me）が自己レビューであるのに対し、本 Skill はバイアスを排した新規 subagent に実際に動かしてもらう実証的評価を提供する。
 
