@@ -180,7 +180,7 @@ date +%Y-%m-%d
 
 1. お名前 / ニックネーム（README とコミットに使います。brief 記入者名と同じでよいか）
 2. AIエージェント / コーディングの経験レベルは?（初めて / 少し触った / 普段から書く）
-   → 初めて・少しの人には **コマンド駆動 (`/build-site-mvp`)** で MVP まで案内する
+   → 経験レベルは README とサポートの手厚さの調整に使う（全員まず環境構築 `/setup-docs` へ進む）
 3. 今日のゴールはどこまで?（MVP まで / セクション追加まで / デプロイまで）
 4. 公開先の希望はありますか?（Vercel / GitHub Pages / ローカルで確認だけ / 未定）
 
@@ -255,8 +255,8 @@ mkdir -p docs
 
 ## サイト実装トラック（環境構築とは別。ここが勉強会の本番）
 
-> Phase 1〜8 は「AIエージェントを動かす土台」。**実際の津和野PRサイトを作るのはここから。**
-> 初心者は **コマンド駆動 (`/build-site-mvp`)** で MVP まで一気に到達し、その後は
+> Phase 1〜8 は「AIエージェントを動かす土台」。**環境構築を終えてから、実際の津和野PRサイトを作る。**
+> 環境構築の完了後、**コマンド駆動 (`/build-site-mvp`)** で MVP まで一気に到達し、その後は
 > **Claude への直接依頼**（「まず project-brief.md を読んで、○○して」）で伸ばす。
 
 - [ ] **MVP: /build-site-mvp** — project-brief.md を入力に、Next.js の津和野PRサイトを
@@ -270,10 +270,10 @@ mkdir -p docs
 
 ## 次に実行すべきコマンド
 
-- **初めて / 少し触った参加者**（Step 2-2 の回答）: いきなり `/build-site-mvp` で
-  MVP まで作ってみる。土台づくり（Phase 1〜8）は後から深掘り教材として任意で回す。
-- **普段からコードを書く参加者 / 環境構築も学びたい人**: `/setup-docs` から Phase 1〜8 を
-  順に進めてから `/build-site-mvp` へ。
+- **全参加者共通**: まず環境構築へ進む。`/clear` の後、`/setup-docs` から Phase 1〜8 を
+  順番に実行して AIエージェントを動かす土台を整える。
+- 環境構築（Phase 1〜8）が終わったら `/build-site-mvp` で MVP を作り、その後は
+  Claude への直接依頼で伸ばす。
 
 ## 各コマンド実行前のチェックリスト
 
@@ -327,7 +327,7 @@ README には勉強会の進め方（Phase 0 → MVP → 貼り付け式プロ�
 
 ユーザーに以下を通知:
 
-「このコマンドの後、`/setup-docs` から `/verify-setup` まで 8 つのコマンドを順番に実行します。それぞれのコマンドファイルは別途配布されているので、`.claude/commands/` に配置してください。環境構築を飛ばして先にサイトを作りたい初心者は、`/build-site-mvp` に進んで構いません。」
+「このコマンドの後、環境構築として `/setup-docs` から `/verify-setup` まで 8 つのコマンドを順番に実行します。それぞれのコマンドファイルは別途配布されているので、`.claude/commands/` に配置してください。環境構築（Phase 1〜8）が終わってから `/build-site-mvp` でサイト作りに進みます。」
 
 配置すべきファイル一覧:
 - `setup-docs.md` ← Phase 1
@@ -338,7 +338,7 @@ README には勉強会の進め方（Phase 0 → MVP → 貼り付け式プロ�
 - `setup-commands.md` ← Phase 6
 - `setup-hooks.md` ← Phase 7
 - `verify-setup.md` ← Phase 8
-- `build-site-mvp.md` ← MVP（初心者はここへ直行可）
+- `build-site-mvp.md` ← MVP（環境構築 Phase 1〜8 の完了後に実行）
 
 ### Step 6: 構築計画の提示
 
@@ -360,11 +360,11 @@ README には勉強会の進め方（Phase 0 → MVP → 貼り付け式プロ�
 | **MVP** | **`/build-site-mvp`** | **Sonnet** | **30-60m** | **`web/`（Next.js 津和野PRサイト・動く最初の1枚）** |
 | 反復・公開・運用 | Claude に直接依頼 | Sonnet | 任意 | セクション追加・推敲・Cloudflare 公開・Sveltia CMS |
 
-環境構築（Phase 1〜8）合計: 6-9 時間（1 日強）。**ただし勉強会で今日サイトを作るだけなら
-Phase 1〜8 は任意**。最短ルートは「Phase 0 (`/bootstrap`) → `/build-site-mvp` → Claude に直接依頼」。
+環境構築（Phase 1〜8）合計: 6-9 時間（1 日強）。
 
 **重要**: 各コマンドの間で必ず `/clear` を実行してください。
-**初心者の最短ルート**: 環境構築 (Phase 1〜8) を飛ばし、`/bootstrap` の直後に `/build-site-mvp` を実行 →
+**基本ルート**: `/bootstrap` の直後は環境構築へ進む →
+`/setup-docs` から Phase 1〜8 を順番に実行 → 完了後に `/build-site-mvp` →
 その後は「まず project-brief.md を読んで、○○して」と Claude に直接頼んで 1 手ずつ伸ばす。
 ```
 
@@ -401,18 +401,16 @@ Bootstrap 完了です。
 - あなた専用の README.md を生成
 - .steering/_setup-progress.md（進捗）を用意
 
-次のステップ（経験レベルで分岐）:
+次のステップ: 環境構築（Phase 1）に進みます
 
-【初めて / 少し触った人】= 今日サイトを完成させる最短ルート
-1. `/clear` でリセット
-2. `/build-site-mvp` を実行 → Next.js の津和野PRサイトが「動く1枚」まで出来る
-3. その後は「まず project-brief.md を読んで、○○して」と Claude に直接頼んで伸ばす
-   （公開は Cloudflare でプライベート、運用は Sveltia CMS、という発展も可能）
-
-【普段からコードを書く人 / 土台も学びたい人】
 1. `/clear` でリセット
 2. `/model opus` に切り替え、`Shift+Tab` ×2 で Plan Mode
-3. `/setup-docs` から Phase 1〜8 を進め、最後に `/build-site-mvp`
+3. `/setup-docs` を実行 → 環境構築（Phase 1〜8）を順番に進める
+
+環境構築（Phase 1〜8）が終わったら、`/build-site-mvp` で
+Next.js の津和野PRサイトを「動く最初の1枚」まで作り、
+その後は「まず project-brief.md を読んで、○○して」と Claude に直接頼んで伸ばします
+（公開は Cloudflare でプライベート、運用は Sveltia CMS、という発展も可能）。
 
 詳細な進捗は `.steering/_setup-progress.md` で確認できます。
 ```
@@ -438,5 +436,5 @@ Bootstrap 完了です。
 - ❌ **README を全員共通の使い回しにする**（参加者ごとに brief の内容を映すのが目的）
 - ❌ `.steering/_setup-progress.md` を作らない（次のコマンドが進捗を引き継げない）
 - ❌ ディレクトリだけ作って構築計画を提示しない
-- ❌ **初心者に環境構築 Phase 1〜8 を強要する**（最短は `/build-site-mvp` 直行）
+- ❌ **bootstrap の直後に `/build-site-mvp`（MVP）へ飛ばす**（次は環境構築 `/setup-docs` から。MVP は Phase 1〜8 の後）
 - ❌ Sonnet で実行する（Opus 推奨）
